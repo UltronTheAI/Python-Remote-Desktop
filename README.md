@@ -37,4 +37,4 @@ The Python Remote Desktop project allows users to control their PC remotely usin
 
 Feel free to customize and enhance this project according to your needs! If you have any questions or need further assistance, don’t hesitate to ask. 🚀
 
-# !License: MIT
+# License: MIT
