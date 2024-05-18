@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <script src="./js/socket.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        height: 100vh;
+        overflow: hidden;
+      }
+      #log {
+        top: 0;
+      }
+    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="w-full h-full bg-slate-900 flex items-center justify-center">
+      <div class="w-5/6 h-5/6 p-4" id="data">
+        <h1 class="text-slate-100 font-bold" style="font-size: 200%">
+          Devices
+        </h1>
+      </div>
+    </div>
+    <div
+      class="w-full h-full bg-slate-900 absolute items-center justify-center"
+      id="log"
+    >
+      <div>
+        <h1
+          class="text-white font-bold p-2 m-2 rounded bg-red-400 w-20 flex items-center justify-center hover:opacity-80 active:opacity-50"
+          style="font-size: 100%"
+          onclick="location.href='/'"
+        >
+          Back
+        </h1>
+        <h1 class="text-slate-300 font-bold" style="font-size: 150%" id="login">
+          Login
+        </h1>
+        <input
+          type="password"
+          placeholder="Password"
+          id="password"
+          class="mt-4 rounded p-4 text-slate-900 font-bold b-0"
+          style="outline: none"
+          required
+          autocomplete="off"
+        />
+      </div>
+    </div>
+    <script>
+      document.getElementById("log").style.display = "none";
+      let element_ = [];
+      const socket = io.connect(
+        "http://" + document.domain + ":" + location.port
+      );
+      // const connectToHost = () => {
+      //   const password = document.getElementById('password').value
+      //   location.href = `/view.html?id=${element_}&password=${password}`
+      // }
+      const inputElement = document.getElementById("password");
+      inputElement.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+          // Handle the Enter key press (e.g., call connectToHost())
+          const password = document.getElementById("password").value;
+          localStorage.setItem("password", password);
+          location.href = `/view.html?${element_}`;
+        }
+      });
+
+      const send = (element) => {
+        element_ = element;
+        document.getElementById("log").style.display = "flex";
+        document.getElementById("login").innerHTML = "Login To " + element;
+      };
+      let hosts = [];
+      socket.on("AUI", (data) => {
+        document.getElementById("data").innerHTML = '<h1 class="text-slate-100 font-bold" style="font-size: 200%">Devices</h1>'
+        hosts = data;
+        data.forEach((element) => {
+          document.getElementById("data").innerHTML +=
+            '<div class="m-4 p-4 rounded bg-slate-800 hover:opacity-80 active:opacity-50" onclick="send(\'' +
+            element[0] +
+            '\')"><h1 class="text-slate-400 font-bold" style="font-size: 100%;">' +
+            element[0] +
+            '</h1><h1 class="text-slate-300 font-bold" style="font-size: 200%;">' +
+            element[1] +
+            "</h1></div>";
+        });
+      });
+    </script>
+  </body>
+</html>

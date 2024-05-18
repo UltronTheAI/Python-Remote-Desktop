@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Screen Share Viewer</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        height: 100vh;
+        overflow: hidden;
+      }
+      #screen {
+        width: 100%;
+        height: 100%;
+        border: none;
+        position: relative; /* Ensure the image position is relative for mouse coordinates */
+      }
+    </style>
+  </head>
+  <body>
+    <img id="screen" />
+    <audio id="audio" controls style="display: none"></audio>
+    <script type="text/javascript">
+      const socket = io.connect(
+        "http://" + document.domain + ":" + location.port
+      );
+      const password = localStorage.getItem("password");
+      // Get the current URL
+      const currentUrl = window.location.href;
+      const host = currentUrl.split('?')[1];
+
+      let width = 1920,
+        height = 1080;
+      socket.emit("host", { host: host, password: password });
+      socket.on("screen_size", (data) => {
+        width = data.width;
+        height = data.height;
+      });
+
+      // Function to scale mouse coordinates based on the server's resolution
+      function scaleCoordinates(
+        x,
+        y,
+        serverWidth,
+        serverHeight,
+        viewerWidth,
+        viewerHeight
+      ) {
+        const scaleX = serverWidth / viewerWidth;
+        const scaleY = serverHeight / viewerHeight;
+
+        return {
+          x: x * scaleX,
+          y: y * scaleY,
+        };
+      }
+
+      socket.on("connect", function () {
+        // Connection established
+      });
+
+      socket.on("screen_share", function (data) {
+        var screen = document.getElementById("screen");
+        if (data.image) {
+          screen.src = "data:image/jpeg;base64," + data.image;
+        }
+      });
+
+      // Handle incoming audio data
+      // socket.on("audio_share", function (data) {
+      //   const audio = document.getElementById("audio");
+      //   const audioContext = new (window.AudioContext ||
+      //     window.webkitAudioContext)();
+      //   const source = audioContext.createBufferSource();
+
+      //   fetch("data:audio/wav;base64," + data.audio)
+      //     .then((response) => response.arrayBuffer())
+      //     .then((buffer) => audioContext.decodeAudioData(buffer))
+      //     .then((decodedData) => {
+      //       source.buffer = decodedData;
+      //       source.connect(audioContext.destination);
+      //       source.start(0);
+      //     })
+      //     .catch((e) => console.error("Error with decoding audio data", e));
+      // });
+
+      document
+        .getElementById("screen")
+        .addEventListener("click", function (event) {
+          const rect = this.getBoundingClientRect();
+          const viewerWidth = rect.width;
+          const viewerHeight = rect.height;
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const scaledCoords = scaleCoordinates(
+            x,
+            y,
+            width,
+            height,
+            viewerWidth,
+            viewerHeight
+          );
+
+          let buttonType = event.button === 0 ? "left" : "right";
+          socket.emit("remote_control", {
+            type: "mouse_click",
+            x: scaledCoords.x,
+            y: scaledCoords.y,
+            button: buttonType,
+            to: host,
+            password: password,
+          });
+        });
+
+      document
+        .getElementById("screen")
+        .addEventListener("mousemove", function (event) {
+          const rect = this.getBoundingClientRect();
+          const viewerWidth = rect.width;
+          const viewerHeight = rect.height;
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const scaledCoords = scaleCoordinates(
+            x,
+            y,
+            width,
+            height,
+            viewerWidth,
+            viewerHeight
+          );
+
+          socket.emit("remote_control", {
+            type: "mouse_move",
+            x: scaledCoords.x,
+            y: scaledCoords.y,
+            to: host,
+            password: password,
+          });
+        });
+
+      document
+        .getElementById("screen")
+        .addEventListener("contextmenu", function (event) {
+          event.preventDefault();
+          const rect = this.getBoundingClientRect();
+          const viewerWidth = rect.width;
+          const viewerHeight = rect.height;
+          const x = event.clientX - rect.left;
+          const y = event.clientY - rect.top;
+          const scaledCoords = scaleCoordinates(
+            x,
+            y,
+            width,
+            height,
+            viewerWidth,
+            viewerHeight
+          );
+
+          socket.emit("remote_control", {
+            type: "mouse_click",
+            x: scaledCoords.x,
+            y: scaledCoords.y,
+            button: "right",
+            to: host,
+            password: password,
+          });
+        });
+
+      document.addEventListener("keypress", function (event) {
+        const key = event.key;
+        socket.emit("remote_control", {
+          type: "keypress",
+          key: key,
+          to: host,
+          password: password,
+        });
+      });
+
+      document
+        .getElementById("screen")
+        .addEventListener("touchstart", function (event) {
+          event.preventDefault(); // Prevent default touch behavior like scrolling
+          const touches = event.touches;
+          const rect = this.getBoundingClientRect();
+          const viewerWidth = rect.width;
+          const viewerHeight = rect.height;
+          const x = touches[0].clientX - rect.left;
+          const y = touches[0].clientY - rect.top;
+          const scaledCoords = scaleCoordinates(
+            x,
+            y,
+            width,
+            height,
+            viewerWidth,
+            viewerHeight
+          );
+
+          if (touches.length === 1) {
+            // One finger touch - left click
+            socket.emit("remote_control", {
+              type: "mouse_click",
+              x: scaledCoords.x,
+              y: scaledCoords.y,
+              button: "left",
+              to: host,
+              password: password,
+            });
+          } else if (touches.length === 2) {
+            // Two finger touch - right click
+            socket.emit("remote_control", {
+              type: "mouse_click",
+              x: scaledCoords.x,
+              y: scaledCoords.y,
+              button: "right",
+              to: host,
+              password: password,
+            });
+          }
+        });
+
+      document
+        .getElementById("screen")
+        .addEventListener("touchmove", function (event) {
+          if (event.touches.length === 3) {
+            // Three finger touch - check for pinch zoom gesture
+            // Implement zoom detection logic here
+            console.log("Zoom gesture detected");
+          }
+        });
+    </script>
+  </body>
+</html>
