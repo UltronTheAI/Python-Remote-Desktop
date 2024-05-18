@@ -10,7 +10,8 @@ The Python Remote Desktop project allows users to control their PC remotely usin
     
         pip install -r requirements.txt
 
-       npm i
+
+        npm i
 
 4. Run the server (index.js):
         
