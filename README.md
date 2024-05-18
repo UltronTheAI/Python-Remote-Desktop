@@ -1,37 +1,40 @@
-Python Remote Desktop
+# Python Remote Desktop
 The Python Remote Desktop project allows users to control their PC remotely using Python. It provides features like screen sharing, audio sharing, remote control, and more.
 
-Getting Started
-Clone this repository:
-git clone https://github.com/UltrontheAI/Python-Remote-Desktop.git
+## Getting Started
+1. Clone this repository:
+    
+        git clone https://github.com/UltrontheAI/Python-Remote-Desktop.git
 
-Install the required dependencies:
-pip install -r requirements.txt
+2. Install the required dependencies:
+    
+        pip install -r requirements.txt
 
-Run the server (index.js):
-node index.js
+3. Run the server (index.js):
+        
+        node index.js
 
-Connect to the server using the Python client (host.py):
-python host.py
+4. Connect to the server using the Python client (host.py):
 
-Features
-Screen sharing
-Audio sharing
-Remote control (mouse and keyboard)
-Toggle shutdown and restart
-Adjustable frame rate (FPS)
-Usage
-Start the server using node index.js.
-Run the Python client (host.py) on the target machine.
-Use the provided controls to interact with the remote PC.
-Control Commands
-Press ‘s’ to toggle shutdown.
-Press ‘r’ to toggle restart.
-Press ‘k’ to toggle keyboard control.
-Press ‘m’ to toggle mouse movement.
-Press ‘c’ to toggle mouse click.
+        python host.py
+
+## Features
+1. Screen sharing
+2. Audio sharing
+3. Remote control (mouse and keyboard)
+4. Toggle shutdown and restart
+5. Adjustable frame rate (FPS)
+## Usage
+1. Start the server using node index.js.
+2. Run the Python client (host.py) on the target machine.
+3. Use the provided controls to interact with the remote PC.
+## Control Commands
+1. Press ‘s’ to toggle shutdown.
+2. Press ‘r’ to toggle restart.
+3. Press ‘k’ to toggle keyboard control.
+4. Press ‘m’ to toggle mouse movement.
+5. Press ‘c’ to toggle mouse click.
+
 Feel free to customize and enhance this project according to your needs! If you have any questions or need further assistance, don’t hesitate to ask. 🚀
 
-GitHub Repository
-
-!License: MIT
+# !License: MIT
