@@ -1,7 +1,7 @@
-###Python Remote Desktop
+### Python Remote Desktop
 The Python Remote Desktop project allows users to control their PC remotely using Python. It provides features like screen sharing, audio sharing, remote control, and more.
 
-##Getting Started
+## Getting Started
 1. Clone this repository:
   git clone https://github.com/UltrontheAI/Python-Remote-Desktop.git
 
@@ -14,17 +14,17 @@ The Python Remote Desktop project allows users to control their PC remotely usin
 4. Connect to the server using the Python client (host.py):
   python host.py
 
-##Features
+## Features
 1. Screen sharing
 2. Audio sharing
 3. Remote control (mouse and keyboard)
 4. Toggle shutdown and restart
 5. Adjustable frame rate (FPS)
-##Usage
+## Usage
 1. Start the server using node index.js.
 2. Run the Python client (host.py) on the target machine.
 3. Use the provided controls to interact with the remote PC.
-##Control Commands
+## Control Commands
 1. Press ‘s’ to toggle shutdown.
 2. Press ‘r’ to toggle restart.
 3. Press ‘k’ to toggle keyboard control.
